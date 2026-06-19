@@ -125,6 +125,7 @@ class TestAccountService(TestCase):
 
     # ADD YOUR TEST CASES HERE ...
 
+    # Read Account
     def test_get_account(self):
         """It should Read a single Account"""
         account = self._create_accounts(1)[0]
@@ -135,10 +136,11 @@ class TestAccountService(TestCase):
         self.assertEqual(data["name"], account.name)
 
     def test_get_account_not_found(self):
-        """It should no Read and Account that is not found"""
+        """It should not Read an Account"""
         response = self.client.get(f"{BASE_URL}/0")
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-    
+
+    # update the account    
     def test_update_account(self):
         """It should Update an existing Account"""
         test_account = AccountFactory()
@@ -149,11 +151,36 @@ class TestAccountService(TestCase):
     )
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-    # update the account
-
         new_account = response.get_json()
         new_account["name"] = "Something Known"
         response = self.client.put(f"{BASE_URL}/{new_account['id']}", json=new_account)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         updated_account = response.get_json()
         self.assertEqual(updated_account["name"], "Something Known")
+
+    def test_account_update_nonexistent(self):
+        """It should not update an Account that does not exist"""
+        payload = {"id": 999999, "name": "Something Known"}  # id should not exist
+        response = self.client.put(
+            f"{BASE_URL}/{payload['id']}",
+            json=payload,
+            content_type="application/json"
+        )
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    # List accounts
+    def test_get_account_list(self):
+        """It should Get a list of Accounts"""
+        self._create_accounts(5)
+        response = self.client.get(BASE_URL)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        list_account = response.get_json()
+        self.assertEqual(len(list_account), 5)
+
+    def test_get_account_list_incorrect_expectation(self):
+        """It should not return an incorrect number of Accounts"""
+        self._create_accounts(5)
+        response = self.client.get(BASE_URL)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        accounts = response.get_json()
+        self.assertNotEqual(len(accounts), 3)
