@@ -3,7 +3,7 @@
 ![Build Status](https://github.com/Moon-Knight13/devops-capstone-project/actions/workflows/ci-build.yaml/badge.svg)
 
 
-This is my captsone project for IBM.
+This is my capstone project for IBM.
 
 
 # DevOps Capstone Template
