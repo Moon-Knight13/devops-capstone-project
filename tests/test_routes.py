@@ -129,8 +129,7 @@ class TestAccountService(TestCase):
     def test_get_account(self):
         """It should Read a single Account"""
         account = self._create_accounts(1)[0]
-        response = self.client.get(f"{BASE_URL}/{account.id}", content_type="application/json"
-        )
+        response = self.client.get(f"{BASE_URL}/{account.id}", content_type="application/json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.get_json()
         self.assertEqual(data["name"], account.name)
@@ -140,17 +139,15 @@ class TestAccountService(TestCase):
         response = self.client.get(f"{BASE_URL}/0")
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
-    # update the account    
+    # update the account
     def test_update_account(self):
         """It should Update an existing Account"""
         test_account = AccountFactory()
         response = self.client.post(
         BASE_URL,
         json=test_account.serialize(),
-        content_type="application/json"
-    )
+        content_type="application/json")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-
         new_account = response.get_json()
         new_account["name"] = "Something Known"
         response = self.client.put(f"{BASE_URL}/{new_account['id']}", json=new_account)
